@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeySkin · 键盘皮肤提示词生成器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">⌨️ KeySkin</div>
+    <div class="subtitle">一句话描述，自动生成 AI 看得懂的键盘皮肤提示词</div>
+  </header>
+
+  <div class="layout">
+    <!-- 左：历史 -->
+    <aside class="sidebar">
+      <div class="side-head">
+        <h3>我的皮肤</h3>
+        <button class="btn tiny" onclick="exportSkins()">导出 JSON</button>
+      </div>
+      <ul id="skinList" class="skin-list"></ul>
+    </aside>
+
+    <!-- 右：主区 -->
+    <main class="content">
+      <section class="card">
+        <h3>① 用大白话描述你想要的键盘壁纸</h3>
+        <p class="hint">不用懂 prompt，想到什么写什么。例如：「赛博朋克、霓虹蓝紫、金属质感、带 RGB 发光的手机键盘壁纸」</p>
+        <textarea id="description" rows="3" placeholder="在这里输入你的描述……"></textarea>
+
+        <label class="block-label">② 选个风格（可不选，工具会自动判断）</label>
+        <div id="styleChips" class="chips"></div>
+
+        <label class="block-label">③ 选机型比例（适配你的手机屏幕）</label>
+        <div id="ratioChips" class="chips"></div>
+
+        <label class="block-label">④ 选键盘形态（键盘在屏幕上怎么摆，决定壁纸"安全区"）</label>
+        <div id="modeChips" class="chips"></div>
+
+        <div class="actions">
+          <button class="btn primary" onclick="doGenerate()">✨ 生成提示词</button>
+          <button class="btn" onclick="clearAll()">清空</button>
+        </div>
+      </section>
+
+      <section class="card" id="resultCard" style="display:none">
+        <h3>⑤ 生成结果（直接复制给 AI 图像模型）</h3>
+        <div id="zh" class="zh-box"></div>
+        <div id="warnings" class="warn-box" style="display:none"></div>
+
+        <label class="block-label">选择目标平台格式</label>
+        <div id="fmtTabs" class="chips">
+          <span class="chip active" data-fmt="universal">通用</span>
+          <span class="chip" data-fmt="midjourney">Midjourney</span>
+          <span class="chip" data-fmt="stable_diffusion">Stable Diffusion</span>
+          <span class="chip" data-fmt="jimeng">即梦 / 可灵</span>
+        </div>
+
+        <label class="block-label">复制即用提示词</label>
+        <textarea id="outText" rows="7" readonly></textarea>
+        <div class="actions">
+          <button class="btn primary" onclick="copyOut()">复制</button>
+          <button class="btn" onclick="saveSkin()">保存到我的皮肤</button>
+        </div>
+
+        <div class="param-row">
+          <span>比例：<b id="ar">9:16</b></span>
+          <span>形态：<b id="modeZh">标准全宽</b></span>
+          <span class="hint">（MJ 写作 --ar <span id="ar2">9:16</span>）</span>
+        </div>
+
+        <div class="enhance">
+          <label class="block-label">⑥ 可选：用本机 Ollama 做智能润色</label>
+          <div class="row">
+            <select id="model"></select>
+            <button class="btn" onclick="doEnhance()">AI 润色</button>
+          </div>
+          <p class="hint" id="enhanceHint">未安装 Ollama 可忽略此步；装了之后点「AI 润色」会让提示词更细腻。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
